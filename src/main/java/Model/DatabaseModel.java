@@ -9,10 +9,10 @@ import java.sql.*;
  */
 public class DatabaseModel {
 
-    private String url = "jdbc:mysql://123.206.49.113:3306/wechat?useUnicode=true&characterEncoding=utf-8";
-    private final static String driver = "com.mysql.jdbc.Driver";
+    private String url = "jdbc:mysql://localhost:3306/chatdata?serverTimezone=GMT";
+    private final static String driver = "com.mysql.cj.jdbc.Driver";
     private String userName = "root";
-    private String password = "";
+    private String password = "wo123456";
     private Connection connection;
     private Statement statement;//静态查询
     private PreparedStatement preparedStatement;//动态查询
@@ -24,7 +24,7 @@ public class DatabaseModel {
      */
     public void connect(){
         try {
-            Class.forName(driver).newInstance();
+            Class.forName(driver);
             connection = DriverManager.getConnection(url, userName, password);
         } catch (Exception e) {
             e.printStackTrace();
