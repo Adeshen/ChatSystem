@@ -1,11 +1,13 @@
 package View;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 
@@ -30,6 +32,8 @@ public class Alert extends window {
         quit();
         setIcon();
         minimiser();
+        ((Label) $("information")).setFont(new Font("Arial", 30));
+        ((Label) $("information")).setAlignment(Pos.BASELINE_CENTER);
     }
     @Override
     public void quit() {
@@ -62,6 +66,10 @@ public class Alert extends window {
     public void setInformation(String Text){
         ((Label) $("information")).setText(Text);
     }
+    public void setSize(int size){
+        ((Label) $("information")).setFont(new Font("Arial", size));
+    }
+
     public void setModailty(window Own)
     {
         initModality(Modality.APPLICATION_MODAL);

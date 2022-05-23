@@ -9,7 +9,7 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 
 /**
- * 邓鹏飞
+ * 钟悦东
  * 登入界面
  */
 public class Dialog extends window {
@@ -65,14 +65,11 @@ public class Dialog extends window {
     清除各种输入框
      */
     public void clear(){
-
         ((TextField) $("UserName")).clear();
         ((PasswordField) $("Password")).clear();
     }
     public void clear(String id){
-
         ((TextField) $(id)).clear();
-
     }
 
 }
