@@ -81,6 +81,8 @@ public class DatabaseModel {
         }catch (Exception e){
         }
     }
+
+
     /**
      * 该方法插入个数据  例如insert(表名,要插入的数据(String数组的形式))
      *

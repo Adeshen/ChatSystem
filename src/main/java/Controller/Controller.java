@@ -119,12 +119,20 @@ public class Controller {
                     if(resultSet.next()){
                         if (resultSet.getString("password")!=null
                                 &&resultSet.getString("password").equals(Password)){
-                            System.out.println("login successfully!");
+                            ResultSet set = database.execResult("SELECT * FROM dialog WHERE account = ?", UserName);
+                            if (set.next()) {
+                                dialog.setErrorTip("accountError", "该账号已经登入，不能重复登入!");
+                            } else {
+//                                database.exec("INSERT INTO dialog account=?", UserName);//登入记录
+                                System.out.println("login successfully!");
+                                userdata.setUserdata(resultSet);
+                                mainWindow.setPersonalInfo(userdata.getName(), userdata.getAccount(), userdata.getAddress(), userdata.getPhone());
+                                mainWindow.show();
+                            }
+
 //                            alert.setInformation("登录成功");
 //                            boolean ok=alert.exec();
-                            userdata.setUserdata(resultSet);
-                            mainWindow.setPersonalInfo(userdata.getName(), userdata.getAccount(), userdata.getAddress(), userdata.getPhone());
-                            mainWindow.show();
+
                         }else{
                             dialog.setErrorTip("passwordError", "！密码有误"+resultSet.getString("password"));
 

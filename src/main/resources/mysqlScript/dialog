@@ -1,0 +1,23 @@
+use chatdata;
+
+CREATE TABLE IF NOT EXISTS 'dialog'(
+   'account' CHAR(32) ,
+   'loginTime'   CHAT(32)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `runoob_tbl`(
+   `runoob_id` INT UNSIGNED AUTO_INCREMENT,
+   `runoob_title` VARCHAR(100) NOT NULL,
+   `runoob_author` VARCHAR(40) NOT NULL,
+   `submission_date` DATE,
+   PRIMARY KEY ( `runoob_id` )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS `dialog`(
+   `account` INT UNSIGNED AUTO_INCREMENT,
+
+   `submission_date` DATE,
+   PRIMARY KEY ( `account` )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
