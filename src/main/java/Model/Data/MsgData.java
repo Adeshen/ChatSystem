@@ -10,3 +10,4 @@ public class MsgData {
     public static Vector<String> accountList = new Vector<>();//保存好友账号
     public static Map<String,Integer> msgTip = new HashMap<>();//保存消息提示
 }
+

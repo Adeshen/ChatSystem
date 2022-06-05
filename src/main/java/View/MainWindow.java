@@ -256,10 +256,7 @@ class ChatListItem{
         left.getChildren().add(text);
         left.getChildren().add(arrow);
         pane.getChildren().add(left);
-
         return pane;
-
-
     }
     public Pane Right(String ihead,String itext,double width,double hight){//自己的消息
         text.getStyleClass().add("righttext");

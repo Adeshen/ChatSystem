@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.ChatManager;
 import Model.Data.MsgData;
 import Model.Data.Userdata;
 import Model.DatabaseModel;
@@ -100,6 +101,7 @@ public class Controller {
         OptionHead();
         find();
         SearchFriends();
+        sendMsgExec();
 //        friendPage.show();
     }
 
@@ -250,9 +252,9 @@ public class Controller {
                                     }
                                 }
                                 mainWindow.getFriendVector().get(0).setOnline();//否则未登入状态
-//                                ChatManager.getInstance().connect("123.206.49.113", UserName);//链接服务器
+                                ChatManager.getInstance().connect("172.0.0.1", UserName);//链接服务器
                                 //设置背景
-                                //setHeadPortrait(((Button)$(mainWindow,"background")),"background",resultSet.getString("background"));
+//                                setHeadPortrait(((Button)$(mainWindow,"background")),"background",resultSet.getString("background"));
                                 mainWindow.show();
 
                             }
@@ -476,7 +478,12 @@ public class Controller {
         System.out.println(button.getStyle());
     }
     public static void setHeadPortrait(Button button, String file,String bg) {
-        button.setStyle(String.format("-fx-background-image: url(\"file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg\")",file, bg));
+        button.setStyle(String.format("-fx-background-image: url(\"file:src/main/resources/View/Fxml/CSS/Image/%s/%s.jpg\")",file, bg));
+    }
+    public void alterHead() {
+        ((Button) $(alterPerson, "replace")).setOnAction(event -> {
+            headProtrait.show();
+        });
     }
 
 
@@ -516,6 +523,97 @@ public class Controller {
             else
             {
                 return;
+            }
+        });
+    }
+
+
+
+    private void sendMsgExec() {
+        ((Button) $(mainWindow, "send")).setOnAction(event -> {
+
+            String youAccount = MsgData.accountList.get(mainWindow.getFriendList().getSelectionModel().getSelectedIndex());
+
+
+            try {
+                //选择登入的好友
+                ResultSet resultSet = database.execResult("SELECT * FROM dialog WHERE account=?", youAccount);
+                if (resultSet.next()) {
+                    String input = ((TextField) $(mainWindow, "input")).getText();
+                    if (!input.equals("")||true) {
+                        String line = userdata.getAccount() + " " + youAccount + " " + input;
+                        mainWindow.addRight(userdata.getHead(), input);//添加自己的消息
+                        System.out.println(line);
+                        try {
+
+                            ChatManager.getInstance().send(line);//向服务器发消息
+                            int i = MsgData.accountList.indexOf(youAccount);//添加到消息集
+                            if (i != -1) {
+                                MsgData.msg.get(i).add(userdata.getAccount() + " " + input);
+                            }
+                            ((TextField) $(mainWindow, "input")).clear();//清输入框
+                        } catch (Exception e) {
+                            alert.setInformation("你断开了链接!");
+                            alert.exec();
+                            e.printStackTrace();
+                        }
+
+                    } else {
+                        return;
+                    }
+                }
+                else
+                {
+                    alert.setInformation("对方暂时不在线，你发的消息对方无法接收!");
+                    alert.exec();
+                }
+            } catch(SQLException e){
+                e.printStackTrace();
+            }
+
+
+        });
+        ((TextField)$(mainWindow,"input")).setOnKeyPressed(event ->
+        {
+            if(event.getCode() == KeyCode.ENTER){
+                String youAccount = MsgData.accountList.get(mainWindow.getFriendList().getSelectionModel().getSelectedIndex());
+
+                try {
+                    //选择登入的好友
+                    ResultSet resultSet = database.execResult("SELECT * FROM dialog WHERE account=?", youAccount);
+                    if (resultSet.next()||true) {
+                        String input = ((TextField) $(mainWindow, "input")).getText();
+                        if (!input.equals("")) {
+                            String line = userdata.getAccount() + " " + youAccount + " " + input;
+                            mainWindow.addRight(userdata.getHead(), input);//添加自己的消息
+                            System.out.println(line);
+                            try {
+                                ChatManager.getInstance().send(line);//向服务器发消息
+                                System.out.println("sendok");
+                                int i = MsgData.accountList.indexOf(youAccount);//添加到消息集
+                                if (i != -1) {
+                                    MsgData.msg.get(i).add(userdata.getAccount() + " " + input);
+                                }
+                                ((TextField) $(mainWindow, "input")).clear();//清输入框
+                            } catch (Exception e) {
+                                alert.setInformation("你断开了链接!");
+                                alert.exec();
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        alert.setInformation("对方暂时不在线，你发的消息对方无法接收!");
+                        alert.exec();
+                    }
+                } catch(SQLException e){
+                    e.printStackTrace();
+                }
+
             }
         });
     }
