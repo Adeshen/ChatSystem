@@ -66,10 +66,10 @@ public class Register extends window {
         RadioButton radioButton = ((RadioButton) $("man"));
         radioButton.setSelected(true);
         radioButton.requestFocus();
-        setHeadPortrait(((Button) $("HeadPortrait")),"head1");
-
+        setHeadPortrait(((Button) $("HeadPortrait")),"head2");
     }
     public static void setHeadPortrait(Button button, String head){
-        button.setStyle(String.format("-fx-background-image: url('/View/Fxml/CSS/Image/head/%s.jpg')",head));
+        //这个函数暂时无效
+        button.setStyle(String.format("-fx-background-image: url(\"file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg\")",head));
     }
 }

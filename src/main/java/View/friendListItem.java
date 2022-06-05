@@ -186,19 +186,7 @@ public class friendListItem{
     public Vector<MenuItem> getItems() {
         return items;
     }
-    /**
-     * 邓鹏飞
-     * 给列表中的某人发消息的页面切换
-     * @param mainWindow
-     * @param userAccount
-     * @param Head
-     */
-    /**
-     * 选择特定好友
-     * @param mainWindow
-     * @param userAccount
-     * @param Head
-     */
+
     public void setActionForSendMsg(MainWindow mainWindow, String userAccount, String Head){
         send.setOnAction(event -> {
             String friendAccount = friendName;
@@ -273,13 +261,7 @@ public class friendListItem{
         });
 
     }
-    /**
-     * 邓鹏飞
-     * 删除列表项的好友
-     * @param database
-     * @param mainWindow
-     * @param I_account
-     */
+
     public void setActionForDelete(DatabaseModel database,MainWindow mainWindow,String I_account){
 
         items.get(3).setOnAction(event -> {
@@ -317,10 +299,7 @@ public class friendListItem{
 
     }
 
-    /**邓鹏飞
-     *
-     * 标记为已读未读
-     */
+
     public void setActionForMsgTip(){
         if(MsgTip.getStyleClass().equals("no-MsgTip"))
         {
@@ -349,7 +328,9 @@ public class friendListItem{
     }
 
     public void setHeadPortrait(Button button, String head){
-        button.setStyle(String.format("-fx-background-image: url('/View/Fxml/CSS/Image/head/%s.jpg')",head));
+        if(head==null)
+            head="head1";
+        button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg')",head));
     }
 
 

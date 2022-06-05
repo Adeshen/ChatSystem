@@ -74,10 +74,10 @@ public class MainWindow extends window {
             contextMenu.getItems().clear();
             if(event.getButton() == MouseButton.SECONDARY){
                 rightItem.get(0).setOnAction(event1 -> {
-//                    Controller.searchFriend.show();
+                    Controller.searchFriend.show();
                 });
                 rightItem.get(1).setOnAction(event1 -> {
-//
+//                  设置页未完成
                 });
                 rightItem.get(2).setOnAction(event1 -> {
                     setIconified(true);
@@ -158,10 +158,14 @@ public class MainWindow extends window {
     }
 
     public static void setHeadPortrait(Button button, String head){
-        button.setStyle(String.format("-fx-background-image: url('/View/Fxml/CSS/Image/head/%s.jpg')",head));
+        if(head==null){
+            head="head1";
+        }
+        button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg')",head));
     }
     public static void setHeadPortrait(Button button ,String background,String file){
-        button.setStyle(String.format("-fx-background-image: url('/View/Fxml/CSS/Image/%s/%s.jpg')",file,background));
+
+        button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/%s/%s.jpg')",file,background));
     }
 
     /**

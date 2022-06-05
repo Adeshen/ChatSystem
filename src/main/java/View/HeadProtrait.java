@@ -61,7 +61,6 @@ public class HeadProtrait extends window {
         ((RadioButton) $("eight")).setToggleGroup(group);
         ((RadioButton) $("nine")).setToggleGroup(group);
         ((RadioButton) $("ten")).setToggleGroup(group);
-
         ((RadioButton) $("one")).setSelected(true);
         ((RadioButton) $("one")).requestFocus();
     }

@@ -1,16 +1,23 @@
 package Controller;
 
+import Model.Data.MsgData;
 import Model.Data.Userdata;
 import Model.DatabaseModel;
 import View.*;
 import View.Alert;
 import View.Dialog;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Vector;
 import java.util.regex.Pattern;
 
 public class Controller {
@@ -23,7 +30,7 @@ public class Controller {
     public static DatabaseModel database;
     private AlterPerson alterPerson;
     public static FriendPage friendPage;
-    //    public static SearchFriend searchFriend;
+    public static SearchFriend searchFriend;
     private HeadProtrait headProtrait;
     private String friendName;
     private String friendHead;
@@ -32,17 +39,44 @@ public class Controller {
 
 
     public Controller() throws IOException {
-        database = new DatabaseModel();
+//        database = new DatabaseModel();
+//
+//        headProtrait=new HeadProtrait();
+//        dialog = new Dialog();
+//
+//        register = new Register();
+//
+//        userdata = new Userdata();
+//
+//        alert=new Alert();
+//
+//        mainWindow=new MainWindow();
+//
+//        homepage=new Homepage();
+//
+//        searchFriend=new SearchFriend();
+//
+//        friendPage=new FriendPage();
+
+
 
         dialog = new Dialog();
-
         register = new Register();
-
         userdata = new Userdata();
-
-        alert=new Alert();
-
-        mainWindow=new MainWindow();
+        database = new DatabaseModel();
+        forget = new Forget();
+        mainWindow = new MainWindow();
+        homepage = new Homepage();
+        alterPerson = new AlterPerson();
+        alert = new Alert();
+        friendPage = new FriendPage();
+        searchFriend = new SearchFriend();
+        headProtrait = new HeadProtrait();
+        MsgData.msg = new Vector<>();
+        MsgData.MsgMap = new HashMap<>();
+        MsgData.accountList = new Vector<>();
+        database.connect();
+        dialog.show();
     }
 
 
@@ -59,7 +93,14 @@ public class Controller {
         registerExec();
         dialog.show();
         initEvent();
+//        headProtrait.show();
+//        homepage.show();
 //        alert.show();
+        FriendInfo();
+        OptionHead();
+        find();
+        SearchFriends();
+//        friendPage.show();
     }
 
 
@@ -75,7 +116,46 @@ public class Controller {
                     System.out.println("switch to register!");
                 }
         );
+        ((Button) $(mainWindow, "maximization")).setOnAction(event -> {
+            searchFriend.clear();
+            searchFriend.show();
 
+        });
+        ((Button) $(dialog, "register")).setOnAction(event -> {
+            dialog.hide();
+            dialog.clear();
+            register.show();
+        });
+        ((Button) $(register, "back")).setOnAction(event -> {
+            register.hide();
+            register.clear();
+            dialog.show();
+        });
+        ((Button) $(dialog, "getBack")).setOnAction(event -> {
+            dialog.hide();
+            dialog.clear("Password");
+            forget.show();
+
+        });
+//        ((Button) $(forget, "cancel")).setOnAction(event -> {
+//            forget.hide();
+//            forget.clear();
+//            dialog.show();
+//        });
+        ((Button) $(mainWindow, "more")).setOnAction(event -> {
+            homepage.show();
+        });
+        ((Button) $(homepage, "alter")).setOnAction(event -> {
+            alterPerson.setUserData(userdata.getUserdata());
+            alterPerson.show();
+        });
+        ((Button) $(register, "ChooseHead")).setOnAction(event -> {
+            headProtrait.show();
+        });
+//        ((Button) $(mainWindow, "maximization")).setOnAction(event -> {
+//            searchFriend.c`lear();
+//            searchFriend.show();
+//        });
 
     }
 
@@ -116,26 +196,70 @@ public class Controller {
 
                 try{
                     /*第一次查询：user表 里面有没有账号*/
-                    if(resultSet.next()){
+                    if(resultSet.next()){   //
                         if (resultSet.getString("password")!=null
                                 &&resultSet.getString("password").equals(Password)){
                             ResultSet set = database.execResult("SELECT * FROM dialog WHERE account = ?", UserName);
-                            if (set.next()) {
+                            if (set.next()&&false) {  //需要删除
                                 dialog.setErrorTip("accountError", "该账号已经登入，不能重复登入!");
                             } else {
-//                                database.exec("INSERT INTO dialog account=?", UserName);//登入记录
+//                                database.exec("INSERT INTO dialog set account=?,last_seen=?", UserName,"2022-06-04 20:15:45");//登入记录
                                 System.out.println("login successfully!");
                                 userdata.setUserdata(resultSet);
+                                dialog.close();
+                                homepage.setUserData(userdata.getUserdata());
+
+                                //主窗口
+                                mainWindow.setHead(userdata.getHead());
                                 mainWindow.setPersonalInfo(userdata.getName(), userdata.getAccount(), userdata.getAddress(), userdata.getPhone());
                                 mainWindow.show();
-                            }
 
+
+                                ResultSet resultSet1 = database.execResult("SELECT head,account,remark FROM user,companion WHERE account = Y_account AND I_account=?", UserName);
+
+                                //聊天助手
+                                mainWindow.addFriend("system", "WeChat聊天助手","聊天助手");
+                                ((Label) $(mainWindow, "Y_account")).setText("WeChat聊天助手");
+                                MsgData.msg.add(new Vector<>());
+                                MsgData.accountList.add("WeChat聊天助手");
+                                MsgData.msgTip.put("WeChat聊天助手", 0);
+
+                                while (resultSet1.next()) {
+                                    MsgData.msg.add(new Vector<>());
+                                    String temp = resultSet1.getString("account");
+                                    MsgData.accountList.add(temp);
+                                    MsgData.msgTip.put(temp, 0);
+                                    mainWindow.addFriend(resultSet1.getString("head"), resultSet1.getString("account"), resultSet1.getString("remark"),database, friendPage);
+                                }
+                                mainWindow.addLeft("system", "欢迎使用WeChat,赶快找好友聊天吧!");
+                                MsgData.msg.get(0).add("WeChat聊天助手 欢迎使用WeChat,赶快找好友聊天吧!");
+
+                                //输入框禁用
+                                ((TextField) $(mainWindow, "input")).setDisable(true);
+                                ((Button) $(mainWindow, "send")).setDisable(true);
+
+                                //开始选择聊天助手
+                                mainWindow.getFriendList().getSelectionModel().select(0);
+
+                                //获取已登入的好友
+                                ResultSet resultSet2 = database.execResult("SELECT Y_account FROM companion WHERE I_account=? AND Y_account in (SELECT account FROM dialog)", UserName);
+                                while (resultSet2.next()) {
+                                    int i = MsgData.accountList.indexOf(resultSet2.getString("Y_account"));
+                                    if (i!=-1) {
+                                        mainWindow.getFriendVector().get(i).setOnline();//已登入就设置为登入状态
+                                    }
+                                }
+                                mainWindow.getFriendVector().get(0).setOnline();//否则未登入状态
+//                                ChatManager.getInstance().connect("123.206.49.113", UserName);//链接服务器
+                                //设置背景
+                                //setHeadPortrait(((Button)$(mainWindow,"background")),"background",resultSet.getString("background"));
+                                mainWindow.show();
+
+                            }
 //                            alert.setInformation("登录成功");
 //                            boolean ok=alert.exec();
-
                         }else{
-                            dialog.setErrorTip("passwordError", "！密码有误"+resultSet.getString("password"));
-
+                            dialog.setErrorTip("passwordError", "！密码有误");
                         }
 
                     }else{
@@ -255,6 +379,145 @@ public class Controller {
                 }
         );
 
+    }
+    public void FriendInfo(){
+
+        ((Button) $(mainWindow,"moref")).setOnAction(event -> {
+            int index = mainWindow.getFriendList().getSelectionModel().getSelectedIndex();
+            String account = MsgData.accountList.get(index);
+            if(account.equals("WeChat聊天助手"))
+            {
+                return;
+            }
+            else {
+                if (friendPage.isShowing()) {
+                    friendPage.close();
+                }
+                try {
+                    ResultSet resultSet = database.execResult("SELECT * FROM user WHERE account=?", account);
+                    resultSet.next();
+                    friendPage.setFriendData(resultSet,((Label)$(mainWindow,"Y_account")).getText());
+                    friendPage.show();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        });
+    }
+
+
+    public void OptionHead() {
+        ((Button) $(headProtrait, "submit")).setOnAction((ActionEvent event) -> {
+            RadioButton one = ((RadioButton) $(headProtrait, "one"));
+            RadioButton two = ((RadioButton) $(headProtrait, "two"));
+            RadioButton three = ((RadioButton) $(headProtrait, "three"));
+            RadioButton four = ((RadioButton) $(headProtrait, "four"));
+            RadioButton five = ((RadioButton) $(headProtrait, "five"));
+            RadioButton six = ((RadioButton) $(headProtrait, "six"));
+            RadioButton seven = ((RadioButton) $(headProtrait, "seven"));
+            RadioButton eight = ((RadioButton) $(headProtrait, "eight"));
+            RadioButton nine = ((RadioButton) $(headProtrait, "nine"));
+            RadioButton ten = ((RadioButton) $(headProtrait, "ten"));
+            if (one.isSelected()) {
+                userdata.setHead("head1");
+            } else if (two.isSelected()) {
+                userdata.setHead("head2");
+            } else if (three.isSelected()){
+                userdata.setHead("head3");
+            } else if (four.isSelected()) {
+                userdata.setHead("head4");
+            } else if (five.isSelected()){
+                userdata.setHead("head5");
+            } else if (six.isSelected()) {
+                userdata.setHead("head6");
+            }
+            else if(seven.isSelected()){
+                userdata.setHead("head7");
+            }
+            else if(eight.isSelected()){
+                userdata.setHead("head8");
+            }
+            else if(nine.isSelected()){
+                userdata.setHead("head9");
+            }
+            else if(ten.isSelected()){
+                userdata.setHead("head10");
+            }
+            setHeadPortrait(((Button) $(register, "HeadPortrait")), userdata.getHead());
+//            setHeadPortrait(((Button) $(alterPerson, "head")), userdata.getHead());
+//            setHeadPortrait(((Button) $(alterPerson, "background")),"head1", userdata.getHead());
+            headProtrait.close();
+        });
+    }
+
+    public void find() {
+        ((TextField) $(mainWindow, "search")).setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                String text = ((TextField) $(mainWindow, "search")).getText();
+                int i = MsgData.accountList.indexOf(text);
+                if (i!=-1) {
+                    ((ListView) $(mainWindow, "FirendList")).getSelectionModel().select(i);
+                }
+                else
+                {
+//                    ((ListView) $(mainWindow, "FirendList")).getSelectionModel().select(0);
+                    alert.setInformation("!未查找到该好友");
+                    alert.exec();
+                    return;
+                }
+            }
+
+        });
+    }
+    public static void setHeadPortrait(Button button, String head) {
+        String ps=String.format("-fx-background-image: url(\"file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg\")", head);
+        button.setStyle(ps);
+        System.out.println(button.getStyle());
+    }
+    public static void setHeadPortrait(Button button, String file,String bg) {
+        button.setStyle(String.format("-fx-background-image: url(\"file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg\")",file, bg));
+    }
+
+
+    public void SearchFriends() {
+        ((TextField) $(searchFriend, "textInput")).setOnKeyPressed(event ->
+        {
+            if(event.getCode() == KeyCode.ENTER) {
+                searchFriend.clear();
+                String UserName = ((TextField) $(searchFriend, "textInput")).getText();
+                ((TextField) $(searchFriend,"textInput")).clear();
+                if (UserName.equals("")) {
+                    alert.setInformation("未输入账号!");
+                    alert.exec();
+                } else if (UserName.equals(userdata.getAccount())) {
+                    alert.setInformation("不能输入自己的账号!");
+                    alert.exec();
+                } else {
+                    ResultSet resultSet = null;
+                    try {
+                        resultSet = database.execResult("SELECT head,account FROM user WHERE account!=? AND account not in (SELECT Y_account FROM companion WHERE I_account = ?) ", userdata.getAccount(), userdata.getAccount());
+                        boolean flag = false;
+                        while (resultSet.next()) {
+                            if (resultSet.getString("account").indexOf(UserName) != -1) {
+                                searchFriend.add(resultSet.getString("head"), resultSet.getString("account"), mainWindow);
+                                flag = true;
+                            }
+                        }
+                        if (!flag) {
+                            alert.setInformation("没有相关结果!");
+                            alert.exec();
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else
+            {
+                return;
+            }
+        });
     }
 
 }

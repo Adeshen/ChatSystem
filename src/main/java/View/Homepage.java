@@ -70,13 +70,11 @@ public class Homepage extends window{
         setHeadPortrait(((Button) $("background")),userdata.get("head"),"head1");
     }
     public static void setHeadPortrait(Button button,String head){
-
-        button.setStyle(String.format("-fx-background-image: url('/View/Fxml/CSS/Image/head/%s.jpg')",head));
-
+        button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg')",head));
     }
     public static void setHeadPortrait(Button button,String head,String file){
 
-        button.setStyle(String.format("-fx-background-image: url('/View/Fxml/CSS/Image/%s/%s.jpg')",file,head));
+        button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/%s/%s.jpg')",file,head));
 
     }
 }
