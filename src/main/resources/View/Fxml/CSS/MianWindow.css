@@ -10,7 +10,6 @@
 }
 #createGroup:hover
 {
-    -fx-background-image: url("Image/Icon/group.jfif");
     -fx-background-image: url("Image/Icon/add.png");
     -fx-background-position: center center;
     -fx-background-repeat: no-repeat;

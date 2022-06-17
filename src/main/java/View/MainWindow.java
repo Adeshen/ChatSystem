@@ -106,21 +106,17 @@ public class MainWindow extends window {
                 contextMenu.getItems().addAll(rightItem);
                 contextMenu.show(this,event.getScreenX(),event.getScreenY());
             }
-            xOffset = getX() - event.getScreenX();
-            yOffset = getY() - event.getScreenY();
+            xOffset = 0-getX() + event.getScreenX();
+            yOffset = (0-getY()) + event.getScreenY();
             getRoot().setCursor(Cursor.CLOSED_HAND);
-
         });
         root.setOnMouseDragged(event -> {
-
             setX(event.getScreenX() + xOffset);
             setY(event.getScreenY() + yOffset);
-
 
         });
         root.setOnMouseReleased(event -> {
             root.setCursor(Cursor.DEFAULT);
-
         });
     }
     //别人的消息
@@ -168,7 +164,6 @@ public class MainWindow extends window {
         button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg')",head));
     }
     public static void setHeadPortrait(Button button ,String background,String file){
-
         button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/%s/%s.jpg')",file,background));
     }
 
@@ -203,6 +198,7 @@ public class MainWindow extends window {
         ((groupListItem)friendVector.get(index)).setActionForClear(this);
         ((groupListItem)friendVector.get(index)).setActionForDelete(Controller.database,this, Controller.userdata.getAccount());
         ((groupListItem)friendVector.get(index)).setMainWindowAccount(Controller.userdata.getAccount());
+        ((groupListItem)friendVector.get(index)).setActionForGroupInfo();
         friendList.getItems().add(friendVector.get(friendVector.size()-1).getPane());
     }
 

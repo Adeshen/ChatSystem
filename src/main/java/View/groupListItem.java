@@ -19,7 +19,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class groupListItem extends friendListItem{
 
-//    private Map<String,Vector<String> > memberhead;
     private String MainWindowAccount;
 
     public groupListItem(String ihead, String iaccount, String remark) {
@@ -29,25 +28,7 @@ public class groupListItem extends friendListItem{
     public void setMainWindowAccount(String account){
         MainWindowAccount=account;
     }
-//    @Override
-//    public void setActionForSendMsg(MainWindow mainWindow, String userAccount, String Head) {
-//        send.setOnAction(event -> {
-//
-//            mainWindow.selectItem=this;
-////            Timer timer = new Timer();//先new一个定时器
-////            timer.schedule(new TimerTask() {
-////                @Override
-////                public void run() {
-////                    Platform.runLater(new Runnable() {
-////                        @Override
-////                        public void run() {//我测试的是自动更新一个函数结果
-////                            flush(mainWindow,userAccount,Head);
-////                        }
-////                    });
-////                }
-////            },100,500);//定时器的延迟时间及间隔时间，不要设置太小
-//        });
-//    }
+
     @Override
     public void flush(String userAccount, String Head){
         String friendAccount = friendName;
@@ -115,17 +96,12 @@ public class groupListItem extends friendListItem{
         }
         send.setContextMenu(menu);
     }
-    public void check
-
-
-
-    @Override
-    public void setActionForInfo(DatabaseModel database,FriendPage friendPage,String account){
+    public void setActionForGroupInfo(){
         items.get(1).setOnAction(event -> {
-
+            Controller.groupPage.setGroupAccount(friendName);
+            Controller.groupPage.Display();
         });
     }
-
     @Override
     public void setActionForDelete(DatabaseModel database,MainWindow mainWindow,String I_account){
         items.get(3).setOnAction(event -> {

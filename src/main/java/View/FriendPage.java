@@ -14,7 +14,7 @@ import java.sql.SQLException;
 public class FriendPage extends window {
 
 
-   public   FriendPage() throws IOException {
+   public  FriendPage() throws IOException {
        root = FXMLLoader.load(getClass().getResource("Fxml/FriendPage.fxml"));
        Scene scene = new Scene(root, 385, 648);
        scene.setFill(Color.TRANSPARENT);

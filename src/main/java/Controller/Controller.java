@@ -38,7 +38,7 @@ public class Controller {
     public static Alert alert;
     public static MainWindow mainWindow;
     public static Creategroup creategroup;
-
+    public static GroupPage groupPage;
     public Controller() throws IOException {
 //        database = new DatabaseModel();
 //
@@ -77,6 +77,7 @@ public class Controller {
         MsgData.MsgMap = new HashMap<>();
         MsgData.accountList = new Vector<>();
         creategroup=new Creategroup();
+        groupPage=new GroupPage();
         database.connect();
         dialog.show();
     }
@@ -168,16 +169,12 @@ public class Controller {
         });
 
     }
-
-
-
     /*
            窗口登录逻辑，，，主要是enter按钮的编写
      */
     private void dialogExec() {
         ((Button) $(dialog, "enter")).setOnAction(event -> {
                     dialog.resetErrorTip();
-
                     /*数据库插入测试*/
 //            try{
 ////                database.exec("INSERT INTO user set account=?  ", "15123456");

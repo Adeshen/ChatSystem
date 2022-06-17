@@ -34,15 +34,11 @@ public abstract class window extends Stage {
 
         });
         root.setOnMouseDragged(event -> {
-
             setX(event.getScreenX() + xOffset);
             setY(event.getScreenY() + yOffset);
-
-
         });
         root.setOnMouseReleased(event -> {
             root.setCursor(Cursor.DEFAULT);
-
         });
     }
 

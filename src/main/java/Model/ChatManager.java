@@ -20,10 +20,8 @@ public class ChatManager {
     private DataInputStream in;
     private DataOutputStream out;
     private MainWindow mainWindow;
-
     private ChatManager() {
     }
-
     private static final ChatManager instance = new ChatManager();
 
     public static ChatManager getInstance() {

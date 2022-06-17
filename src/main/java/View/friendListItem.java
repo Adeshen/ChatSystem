@@ -76,6 +76,8 @@ public class friendListItem{
         friendName = iaccount;
         setMenuItem();
     }
+
+
     public Pane getPane() {
         return pane;
     }
@@ -185,7 +187,6 @@ public class friendListItem{
         state.getStyleClass().clear();
         state.getStyleClass().add("outline");
     }
-
     /**
      * 获取好友状态
      * @return
