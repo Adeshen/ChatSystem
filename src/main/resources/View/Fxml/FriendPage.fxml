@@ -54,11 +54,11 @@
                </font></TextField>
             <Button id="submit" layoutX="257.0" layoutY="169.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="56.0" text="修改" textFill="#aeaeae">
                <font>
-                  <Font name="Forte" size="15.0" />
+                  <Font name="" size="15.0" />
                </font></Button>
             <Label layoutX="35.0" layoutY="137.0" prefHeight="28.0" prefWidth="56.0" text="备注:" textFill="#aeaeae" textOverrun="CLIP" wrapText="true">
                <font>
-                  <Font name="Forte" size="17.0" />
+                  <Font name="" size="17.0" />
                </font>
             </Label>
          </children>

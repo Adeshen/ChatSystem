@@ -3,28 +3,32 @@ import Controller.Controller;
 //import Model.ChatManager;
 import Model.DatabaseModel;
 import Model.Tool;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javafx.scene.control.Button;
 
 /**
- * 邓鹏飞
+
  *
  * 主窗口
  */
 public class MainWindow extends window {
     private ListView friendList;
-    private ListView chatList;
+    public ListView chatList;
     private Vector<friendListItem> friendVector;
     private Vector<ChatListItem> chatVector;
     private ContextMenu contextMenu;
@@ -33,13 +37,14 @@ public class MainWindow extends window {
     private double yOffset;
     public MainWindow() throws IOException {
         root = FXMLLoader.load(getClass().getResource("Fxml/MainWindow.fxml"));
-        Scene scene = new Scene(root, 1400, 700);
+        Scene scene = new Scene(root, 923, 700);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
         initStyle(StageStyle.TRANSPARENT);
         setResizable(false);
         setTitle("We Chat");
         friendList = ((ListView) $("FirendList"));
+
         chatList = ((ListView) $("ChatList"));
         friendVector = new Vector<>();
         contextMenu = new ContextMenu();
@@ -54,6 +59,8 @@ public class MainWindow extends window {
         quit();
         minimiser();
         initTooltip();
+        chatflush();
+
     }
     public void initTooltip(){
         ((Button) $("maximization")).setTooltip(new Tooltip("添加好友"));
@@ -91,7 +98,6 @@ public class MainWindow extends window {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -116,7 +122,6 @@ public class MainWindow extends window {
             root.setCursor(Cursor.DEFAULT);
 
         });
-
     }
     //别人的消息
     public void addLeft(String head,String Msg){
@@ -141,7 +146,6 @@ public class MainWindow extends window {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -169,12 +173,7 @@ public class MainWindow extends window {
     }
 
     /**
-     * 邓鹏飞
-     * 主窗口添加好友
-     * @param head
-     * @param account
-     * @param database
-     * @param friendPage
+
      */
     public void addFriend(String head, String account,String remark, DatabaseModel database,FriendPage friendPage){
         friendVector.add(new friendListItem(head,account,remark));
@@ -191,8 +190,22 @@ public class MainWindow extends window {
         friendVector.add(new friendListItem(head,account,remark));
         friendVector.get(index).setActionForSendMsg(this,account, Controller.userdata.getHead());
         friendVector.get(index).setActionForMsgTip();
+        friendVector.get(index).setActionForClear(this);
+        (friendVector.get(index)).setActionForDelete(Controller.database,this, Controller.userdata.getAccount());
         friendList.getItems().add(friendVector.get(friendVector.size()-1).getPane());
     }
+    public void addGroup(String head ,String account,String remark){
+        int index = friendVector.size();
+        friendVector.add(new groupListItem(head,account,remark));
+        friendVector.get(index).setActionForSendMsg(this,account, Controller.userdata.getHead());
+        friendVector.get(index).setActionForMsgTip();
+
+        ((groupListItem)friendVector.get(index)).setActionForClear(this);
+        ((groupListItem)friendVector.get(index)).setActionForDelete(Controller.database,this, Controller.userdata.getAccount());
+        ((groupListItem)friendVector.get(index)).setMainWindowAccount(Controller.userdata.getAccount());
+        friendList.getItems().add(friendVector.get(friendVector.size()-1).getPane());
+    }
+
     public Vector<friendListItem> getFriendVector() {
         return friendVector;
     }
@@ -201,13 +214,43 @@ public class MainWindow extends window {
     }
     public void setPersonalInfo(String account,String name,String address,String phone)
     {
-        ((Label) $("myAccount")).setText(account);
+//        ((Label) $("myAccount")).setText(account);
         ((Label) $("myName")).setText(name);
-        ((Label) $("myAddress")).setText(address);
-        ((Label) $("myPhone")).setText(phone);
+//        ((Label) $("myAddress")).setText(address);
+//        ((Label) $("myPhone")).setText(phone);
     }
+    public String selectItem;
+    public void chatflush(){
+
+        Thread t=new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                Timer timer = new Timer();//先new一个定时器
+//                timer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        Platform.runLater(new Runnable() {
+//                            @Override
+//                            public void run() {//我测试的是自动更新一个函数结果
+//                                while(selectItem==null);
+//                                System.out.println("flush");
+//                                selectItem.flush(selectItem.friendName,selectItem.friendHead);
+//                            }
+//                        });
+//                    }
+//                },100,500);//定时器的延迟时间及间隔时间，不要设置太小
+            }
+        });
+//        t.start();
+
+        root.setOnMousePressed(event -> {
+
+        });
+    }
+
+
 }
-//邓鹏飞
+
 //
 // 聊天列表项类
 class ChatListItem{
@@ -221,7 +264,7 @@ class ChatListItem{
         pane = new Pane();
         head = new Button();
         text = new TextArea();
-        pane.setPrefSize(730,150);
+        pane.setPrefSize(589,150);
         left = new Pane();
         right = new Pane();
         arrow = new Button();
@@ -241,15 +284,15 @@ class ChatListItem{
     public Pane Left(String ihead,String itext,double width,double hight){//别人的消息
         text.getStyleClass().add("lefttext");
         arrow.getStyleClass().add("leftarrow");
-        pane.setPrefHeight(110+hight);
+        pane.setPrefHeight(40+hight);
         left.setPrefHeight(30+hight);
         head.setLayoutY(10);
-        head.setLayoutX(10);
+        head.setLayoutX(80);
         text.setPrefSize(width,hight);
-        text.setLayoutX(100);
+        text.setLayoutX(180);
         text.setLayoutY(30);
-        arrow.setLayoutY(40);
-        arrow.setLayoutX(85);
+//        arrow.setLayoutY(40);
+//        arrow.setLayoutX(48);
         text.setText(itext);
         MainWindow.setHeadPortrait(head,ihead);
         left.getChildren().add(head);
@@ -262,15 +305,15 @@ class ChatListItem{
         text.getStyleClass().add("righttext");
         arrow.getStyleClass().add("rightarrow");
         head.setLayoutY(10);
-        head.setLayoutX(510);
-        pane.setPrefHeight(110+hight);
+        head.setLayoutX(300);
+        pane.setPrefHeight(40+hight);
         right.setPrefHeight(30+hight);
         text.setPrefSize(width,hight);
         //text=480 0 text = 470 10 460 20 480-width
         text.setLayoutY(30);
-        text.setLayoutX(480-width);
-        arrow.setLayoutY(40);
-        arrow.setLayoutX(475);
+        text.setLayoutX(280-width);
+        arrow.setLayoutY(4000);
+        arrow.setLayoutX(4750);
         text.setText(itext);
         MainWindow.setHeadPortrait(head,ihead);
         right.getChildren().add(head);
@@ -280,7 +323,6 @@ class ChatListItem{
         right.setLayoutX(150);
         pane.getChildren().add(right);
         return pane;
-
     }
 
 }

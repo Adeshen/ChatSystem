@@ -1,5 +1,13 @@
 package Model;
 
+import Controller.Controller;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Vector;
+
 public class Tool {
     public static double getWidth(String Msg){
         int len = Msg.length();
@@ -22,7 +30,7 @@ public class Tool {
         }
         else
         {
-            return 480;
+            return 300;
         }
     }
     public static double getHight(String Msg){
@@ -45,7 +53,7 @@ public class Tool {
             }
 
         }
-        return height;
+        return height+2;
 
     }
     private static final boolean isChinese(char c) {
@@ -59,5 +67,23 @@ public class Tool {
             return true;
         }
         return false;
+    }
+
+    public static final Vector<String> findGoupByMember(String account){
+        Vector<String> groups=new Vector<>();
+        try{
+            ResultSet resultSet=Controller.database.execResult("Select * from groupmember where member=?",account);
+            while(resultSet.next()){
+                groups.add(resultSet.getString("groupid"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return groups;
+    }
+    public static final String getTime(){
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+        return formatter.format(date);
     }
 }

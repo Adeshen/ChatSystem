@@ -17,6 +17,9 @@ public abstract class window extends Stage {
     /**
      * 窗口移动方法
      */
+    window(){
+        getIcons().add(new Image("file:src/main/resources/View/Fxml/CSS/Image/Icon.png"));
+    }
     public void setIcon(){
 
         //getIcons().add(new Image(getClass().getResourceAsStream("/View/Fxml/CSS/Image/icon.png")));

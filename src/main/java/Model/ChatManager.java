@@ -13,10 +13,7 @@ import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-/**
- * 邓鹏飞
- * 接收信息类 多线程接收服务端的信息
- */
+
 public class ChatManager {
     private String ip = "127.0.0.1";
     private Socket socket;
@@ -47,15 +44,16 @@ public class ChatManager {
         System.out.println("connecting!");
         Thread k= new Thread(() -> {
             try {
-//                System.out.println("connect success!");
+
                 socket = new Socket(ip, 2347);
+                System.out.println("connect !");
                 in = new DataInputStream(socket.getInputStream());
                 out = new DataOutputStream(socket.getOutputStream());
+//
                 out.writeUTF(account);
-
                 String line;
                 while ((line = in.readUTF()) != null) {
-
+                    System.out.println(line+"  back");
                     String str[] = line.split(" ");
                     String I_account = str[0];
                     String Y_account = str[1];
@@ -140,6 +138,8 @@ public class ChatManager {
                             if(i!=-1){
                                 mainWindow.getFriendVector().get(i).setOutline();
                             }
+                        }else if(Msg.equals("&&&& ")){//群聊消息
+
                         }
                         else {//一般信息
                             if (MsgData.accountList.get(mainWindow.getFriendList().getSelectionModel().getSelectedIndex()).equals(I_account)) {

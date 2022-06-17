@@ -9,5 +9,7 @@ public class MsgData {
     public static Map<String, Vector<String>> MsgMap = new HashMap<>();//保存消息
     public static Vector<String> accountList = new Vector<>();//保存好友账号
     public static Map<String,Integer> msgTip = new HashMap<>();//保存消息提示
+
+
 }
 

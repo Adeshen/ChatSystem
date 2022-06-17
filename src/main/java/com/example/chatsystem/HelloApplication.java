@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import View.*;
 import java.io.IOException;
 
+
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -41,6 +42,7 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+//        ok;
         launch();
     }
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Dialog extends window {
     public Dialog() throws IOException {
         root = FXMLLoader.load(getClass().getResource("Fxml/Dialog.fxml"));
-        Scene scene = new Scene(root, 450, 480);
+        Scene scene = new Scene(root, 355, 427);
         scene.setFill(Color.TRANSPARENT);
         setScene(scene);
         initStyle(StageStyle.TRANSPARENT);

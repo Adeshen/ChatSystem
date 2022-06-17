@@ -3,6 +3,7 @@ package View;
 //import Model.ChatManager;
 import Model.Data.MsgData;
 import Model.DatabaseModel;
+import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 
@@ -10,23 +11,26 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 /**
- * 邓鹏飞
+ *
  *
  * 好友列表项
  */
 public class friendListItem{
-    private Button head;
-    private Label information;
-    private Pane pane;
-    private Button send;
-    private String friendHead;
-    private Button MsgTip;
-    private Button state;
-    private String friendName;
+    protected Button head;
+    protected Label information;
+    protected Pane pane;
+    protected Button send;
+    protected String friendHead;
+    protected Button MsgTip;
+    protected Button state;
+    protected String friendName;
     Vector<MenuItem> items;
+    protected MainWindow mainWindow;
     public friendListItem(String ihead,String iaccount,String remark){
         head = new Button();
         information = new Label();
@@ -64,9 +68,9 @@ public class friendListItem{
         pane.getChildren().add(send);
         items = new Vector<>();
         items.add(new MenuItem(""));
-        items.add(new MenuItem("好友资料"));
+        items.add(new MenuItem("资料"));
         items.add(new MenuItem("清除聊天记录"));
-        items.add(new MenuItem("删除好友"));
+        items.add(new MenuItem("删除联系"));
         setHead(ihead);
         setText(remark);
         friendName = iaccount;
@@ -104,9 +108,20 @@ public class friendListItem{
             {
                 return;
             }
+//            else if(account.charAt(0)=='#'){
+//                if (friendPage.isShowing()) {
+//                    friendPage.close();
+//                }
+//                try {
+//                    ResultSet resultSet = database.execResult("SELECT * FROM user WHERE account=?", account);
+//                    resultSet.next();
+//                    friendPage.setFriendData(resultSet,information.getText());
+//                    friendPage.show();
+//                } catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
             else {
-
-
                 if (friendPage.isShowing()) {
                     friendPage.close();
                 }
@@ -188,56 +203,77 @@ public class friendListItem{
     }
 
     public void setActionForSendMsg(MainWindow mainWindow, String userAccount, String Head){
-        send.setOnAction(event -> {
-            String friendAccount = friendName;
-
-            ((Label) mainWindow.$("Y_account")).setText(information.getText());
-            if(friendAccount.equals("WeChat聊天助手"))
-            {
-                ((TextField) mainWindow.$("input")).setDisable(true);
-                ((Button) mainWindow.$("send")).setDisable(true);
-            }
-            else {
-                ((TextField) mainWindow.$("input")).setDisable(false);
-                ((Button) mainWindow.$("send")).setDisable(false);
-            }
-            //获取当前好友在好友列表中的位置
-            int index = MsgData.accountList.indexOf(friendAccount);
-            if(index!=-1){
-                //选中
-                mainWindow.getFriendList().getSelectionModel().select(index);
-                this.clearMsgTip();//清除消息提示
-                MsgData.msgTip.put(friendAccount,0);
-            }
-            //放入消息映射
-            for(int i=0;i<MsgData.accountList.size();i++) {
-                MsgData.MsgMap.put(MsgData.accountList.get(i),MsgData.msg.get(i));
-            }
-            //遍历消息映射
-            for(Map.Entry<String,Vector<String>> entry : MsgData.MsgMap.entrySet()){
-                if(entry.getKey().equals(friendAccount)){
-                    ((ListView)mainWindow.$("ChatList")).getItems().clear();
-                    Vector<String> record = entry.getValue();
-                    for(int i=0;i<record.size();i++){
-                        String []current = record.get(i).split(" ");
-                        String account = current[0];
-                        String Msg = "";
-                        for(int j=1;j<current.length;j++){
-                            Msg=Msg+current[j]+" ";
-                        }
-                        if(account.equals(userAccount)){
-                            mainWindow.addLeft(friendHead,Msg);
-                        }
-                        else
-                        {
-                            mainWindow.addRight(Head,Msg);
-                        }
+        Timer timer = new Timer();//先new一个定时器
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {//我测试的是自动更新一个函数结果
+                        if(mainWindow.selectItem==friendName){
+//                            System.out.println("flush");
+                            flush(friendName,friendHead);
+                        };
                     }
-                    break;
-                }
-
+                });
             }
+        },100,500);//定时器的延迟时间及间隔时间，不要设置太小
+        send.setOnAction(event -> {
+            this.mainWindow=mainWindow;
+            this.mainWindow.selectItem=friendName;
+            flush(friendName,friendHead);
         });
+    }
+
+
+    public void flush(String userAccount, String Head){
+        String friendAccount = friendName;
+        ((Label) mainWindow.$("Y_account")).setText(information.getText());
+        if(friendAccount.equals("WeChat聊天助手"))
+        {
+            ((TextField) mainWindow.$("input")).setDisable(true);
+            ((Button) mainWindow.$("send")).setDisable(true);
+        }
+        else {
+            ((TextField) mainWindow.$("input")).setDisable(false);
+            ((Button) mainWindow.$("send")).setDisable(false);
+        }
+        //获取当前好友在好友列表中的位置
+        int index = MsgData.accountList.indexOf(friendAccount);
+        if(index!=-1){
+            //选中
+            mainWindow.getFriendList().getSelectionModel().select(index);
+            this.clearMsgTip();//清除消息提示
+            MsgData.msgTip.put(friendAccount,0);
+        }
+        //放入消息映射
+        for(int i=0;i<MsgData.accountList.size();i++) {
+            MsgData.MsgMap.put(MsgData.accountList.get(i),MsgData.msg.get(i));
+        }
+//            System.out.println(MsgData.MsgMap);
+        //遍历消息映射
+        for(Map.Entry<String,Vector<String>> entry : MsgData.MsgMap.entrySet()){
+            if(entry.getKey().equals(friendAccount)){
+                ((ListView)mainWindow.$("ChatList")).getItems().clear();
+                Vector<String> record = entry.getValue();
+                for(int i=0;i<record.size();i++){
+                    String []current = record.get(i).split(" ");
+                    String account = current[0];
+                    String Msg = "";
+                    for(int j=1;j<current.length;j++){
+                        Msg=Msg+current[j]+" ";
+                    }
+                    if(account.equals(userAccount)){
+                        mainWindow.addLeft(friendHead,Msg);
+                    }
+                    else
+                    {
+                        mainWindow.addRight(Head,Msg);
+                    }
+                }
+                break;
+            }
+        }
     }
 
     public void setActionForClear(MainWindow mainWindow){
@@ -332,6 +368,4 @@ public class friendListItem{
             head="head1";
         button.setStyle(String.format("-fx-background-image: url('file:src/main/resources/View/Fxml/CSS/Image/head/%s.jpg')",head));
     }
-
-
 }
